@@ -1,2 +1,7 @@
-import { app } from "./app/app.ts";
-let myApp = new app();
+import { App } from "./app/app.ts";
+declare var $: any;
+
+let myApp;
+let rootSelector='#mainApp';
+
+$(() => myApp = new App(rootSelector));

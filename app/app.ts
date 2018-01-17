@@ -18,5 +18,4 @@ export class App {
     injectDependecy(element) {
         element.self = this;
     }
-
 }

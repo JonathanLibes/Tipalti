@@ -10,20 +10,13 @@ export class App {
     eventsList = [];
     constructor(rootSelector: string) {
         this.node = HtmlTools.createElementAndAppend(rootSelector, this.view);
-        this.registerEvents();
+        this.injectDependecy(this.node);
     }
     onClick() {
+        console.log('working');
     }
-    registerEvents() {
-        this.eventsList.push(this.registerEvent(this.node, 'onclick', this.onClick));
+    injectDependecy(element) {
+        element.self = this;
     }
-    registerEvent(element, eventName, eventHandler) {
-        let returnVal = { element: element, eventName: eventName, eventHandler: eventHandler, succeededRegister: false };
-        if (!element || !eventName || !eventHandler || !(eventName in element)) {
-            return returnVal;
-        }
-        element[eventName] = eventHandler;
-        returnVal.succeededRegister = true;
-        return returnVal;
-    }
+
 }

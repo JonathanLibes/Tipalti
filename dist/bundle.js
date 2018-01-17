@@ -90,21 +90,13 @@ var App = /** @class */ (function () {
         this.node = null;
         this.eventsList = [];
         this.node = htmlTools_1.HtmlTools.createElementAndAppend(rootSelector, this.view);
-        this.registerEvents();
+        this.injectDependecy(this.node);
     }
     App.prototype.onClick = function () {
+        console.log('working');
     };
-    App.prototype.registerEvents = function () {
-        this.eventsList.push(this.registerEvent(this.node, 'onclick', this.onClick));
-    };
-    App.prototype.registerEvent = function (element, eventName, eventHandler) {
-        var returnVal = { element: element, eventName: eventName, eventHandler: eventHandler, succeededRegister: false };
-        if (!element || !eventName || !eventHandler || !(eventName in element)) {
-            return returnVal;
-        }
-        element[eventName] = eventHandler;
-        returnVal.succeededRegister = true;
-        return returnVal;
+    App.prototype.injectDependecy = function (element) {
+        element.self = this;
     };
     return App;
 }());
@@ -115,7 +107,7 @@ exports.App = App;
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = "<div>HELLO</div>";
+module.exports = "<div onclick=\"self.onClick()\">HELLO</div>";
 
 /***/ }),
 /* 3 */
@@ -136,6 +128,15 @@ var HtmlTools = /** @class */ (function () {
         var node = this.createElementFromHTML(htmlString);
         document.querySelector(selector).appendChild(node);
         return node;
+    };
+    HtmlTools.registerEvent = function (element, eventName, eventHandler) {
+        var returnVal = { element: element, eventName: eventName, eventHandler: eventHandler, succeededRegister: false };
+        if (!element || !eventName || !eventHandler || !(eventName in element)) {
+            return returnVal;
+        }
+        element[eventName] = eventHandler;
+        returnVal.succeededRegister = true;
+        return returnVal;
     };
     return HtmlTools;
 }());

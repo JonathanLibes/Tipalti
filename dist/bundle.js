@@ -83,23 +83,28 @@ $(function () { return myApp = new app_ts_1.App(rootSelector); });
 "use strict";
 
 exports.__esModule = true;
+var htmlTools_1 = __webpack_require__(3);
 var App = /** @class */ (function () {
     function App(rootSelector) {
         this.view = __webpack_require__(2);
         this.node = null;
-        this.node = this.createElementFromHTML(this.view);
-        document.querySelector(rootSelector).appendChild(this.node);
+        this.eventsList = [];
+        this.node = htmlTools_1.HtmlTools.createElementAndAppend(rootSelector, this.view);
         this.registerEvents();
     }
     App.prototype.onClick = function () {
     };
     App.prototype.registerEvents = function () {
-        this.node.onclick = this.onClick;
+        this.eventsList.push(this.registerEvent(this.node, 'onclick', this.onClick));
     };
-    App.prototype.createElementFromHTML = function (htmlString) {
-        var div = document.createElement('div');
-        div.innerHTML = htmlString.trim();
-        return div.firstChild;
+    App.prototype.registerEvent = function (element, eventName, eventHandler) {
+        var returnVal = { element: element, eventName: eventName, eventHandler: eventHandler, succeededRegister: false };
+        if (!element || !eventName || !eventHandler || !(eventName in element)) {
+            return returnVal;
+        }
+        element[eventName] = eventHandler;
+        returnVal.succeededRegister = true;
+        return returnVal;
     };
     return App;
 }());
@@ -111,6 +116,31 @@ exports.App = App;
 /***/ (function(module, exports) {
 
 module.exports = "<div>HELLO</div>";
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var HtmlTools = /** @class */ (function () {
+    function HtmlTools() {
+    }
+    HtmlTools.createElementFromHTML = function (htmlString) {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
+    };
+    HtmlTools.createElementAndAppend = function (selector, htmlString) {
+        var node = this.createElementFromHTML(htmlString);
+        document.querySelector(selector).appendChild(node);
+        return node;
+    };
+    return HtmlTools;
+}());
+exports.HtmlTools = HtmlTools;
+
 
 /***/ })
 /******/ ]);

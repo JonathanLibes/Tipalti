@@ -85,15 +85,24 @@ $(function () { return myApp = new app_ts_1.App(rootSelector); });
 exports.__esModule = true;
 var App = /** @class */ (function () {
     function App(rootSelector) {
-        this.view = '<div>Hello</div>';
+        this.view = __webpack_require__(2);
         this.rootElement = null;
-        this.rootElement = $(rootSelector).append(this.view);
-        console.log(this.rootElement);
+        this.rootElement = $(this.view);
+        $(rootSelector).append(this.rootElement);
     }
+    App.prototype.onClick = function () {
+        console.log("clicked worked !!!");
+    };
     return App;
 }());
 exports.App = App;
 
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = "<div onclick=\"console.log(this)\">Hello</div>";
 
 /***/ })
 /******/ ]);

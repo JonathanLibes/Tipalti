@@ -86,17 +86,38 @@ exports.__esModule = true;
 var htmlTools_1 = __webpack_require__(3);
 var App = /** @class */ (function () {
     function App(rootSelector) {
+        var _this = this;
         this.view = __webpack_require__(2);
         this.node = null;
-        this.eventsList = [];
+        this.model = {
+            counter: 0,
+            buttonText: "asa"
+        };
+        this.renderFunctions = {
+            counter: function () {
+                debugger;
+                document.getElementById("counter").innerHTML = _this.model.counter;
+            }
+        };
         this.node = htmlTools_1.HtmlTools.createElementAndAppend(rootSelector, this.view);
+        this.watchModel();
         this.injectDependecy(this.node);
     }
     App.prototype.onClick = function () {
-        console.log('working');
+        this.model.counter++;
+        this.model.buttonText = 'buttonText';
     };
     App.prototype.injectDependecy = function (element) {
         element.self = this;
+    };
+    App.prototype.watchModel = function () {
+        var _this = this;
+        var keys = Object.keys(this.model);
+        keys.forEach(function (key) { return _this.model.watch(key, function (key) { return _this.render(key); }); });
+    };
+    App.prototype.render = function (key) {
+        var renderFunc = this.renderFunctions[key];
+        renderFunc();
     };
     return App;
 }());
@@ -107,7 +128,7 @@ exports.App = App;
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = "<div onclick=\"self.onClick()\">HELLO</div>";
+module.exports = "<button onclick=\"self.onClick()\">HELLO</button>\r\n<div id=\"counter\">counter:</div>";
 
 /***/ }),
 /* 3 */
@@ -126,6 +147,7 @@ var HtmlTools = /** @class */ (function () {
     };
     HtmlTools.createElementAndAppend = function (selector, htmlString) {
         var node = this.createElementFromHTML(htmlString);
+        debugger;
         document.querySelector(selector).appendChild(node);
         return node;
     };

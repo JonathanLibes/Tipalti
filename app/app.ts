@@ -3,12 +3,20 @@ declare var $: any;
 
 export class App {
     view: string = require("./app.html");
-    rootElement: any = null;
+    node: any = null;
     constructor(rootSelector: string) {
-        this.rootElement = $(this.view);
-        $(rootSelector).append(this.rootElement);
+        this.node = this.createElementFromHTML(this.view);
+        document.querySelector(rootSelector).appendChild(this.node);
+        this.registerEvents();
     }
     onClick() {
-        console.log("clicked worked !!!");
+    }
+    registerEvents() {
+        this.node.onclick = this.onClick;
+    }
+    createElementFromHTML(htmlString) {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
     }
 }

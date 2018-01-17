@@ -86,12 +86,20 @@ exports.__esModule = true;
 var App = /** @class */ (function () {
     function App(rootSelector) {
         this.view = __webpack_require__(2);
-        this.rootElement = null;
-        this.rootElement = $(this.view);
-        $(rootSelector).append(this.rootElement);
+        this.node = null;
+        this.node = this.createElementFromHTML(this.view);
+        document.querySelector(rootSelector).appendChild(this.node);
+        this.registerEvents();
     }
     App.prototype.onClick = function () {
-        console.log("clicked worked !!!");
+    };
+    App.prototype.registerEvents = function () {
+        this.node.onclick = this.onClick;
+    };
+    App.prototype.createElementFromHTML = function (htmlString) {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
     };
     return App;
 }());
@@ -102,7 +110,7 @@ exports.App = App;
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = "<div onclick=\"console.log(this)\">Hello</div>";
+module.exports = "<div>HELLO</div>";
 
 /***/ })
 /******/ ]);

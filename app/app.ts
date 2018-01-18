@@ -1,40 +1,50 @@
-import { HtmlTools } from '../share/htmlTools'
-
-declare var require: any;
-declare var $: any;
-
+import {HtmlTools} from './share/html-tools'
+import {AppViewModel} from './app-model'
+declare var require : any;
+declare var $ : any;
 
 export class App {
-    view: string = require("./app.html");
-    node: any = null;
-    model: any = {
-        counter: 0,
-        buttonText: "asa"
-    };
-    renderFunctions: any = {
+    view : string = require("./app.html");
+    vm : AppViewModel = null
+    node : any = null;
+    renderFunctions : any = {
         counter: () => {
-            debugger;
-            document.getElementById("counter").innerHTML = this.model.counter;
+            document
+                .getElementById("counter")
+                .innerHTML = this.vm.counter;
         }
     }
-    constructor(rootSelector: string) {
+    constructor(rootSelector : string) {
+        this.vm = new AppViewModel();
         this.node = HtmlTools.createElementAndAppend(rootSelector, this.view);
-        this.watchModel();
+        this.startWatchModel();
         this.injectDependecy(this.node);
+        this.injectNestedDependecy(this.node);
     }
     onClick() {
-        this.model.counter++;
-        this.model.buttonText = 'buttonText';
+        this.vm.counter++;
+    }
+    injectNestedDependecy(node) {
+        for (var i = 0; i < node.children.length; i++) {
+            var child = node.children[i];
+            this.injectNestedDependecy(child);
+            this.injectDependecy(child);
+        }
     }
     injectDependecy(element) {
         element.self = this;
     }
-    watchModel() {
-        var keys = Object.keys(this.model);
-        keys.forEach(key => this.model.watch(key, (key) => this.render(key)));
+    startWatchModel() {
+        var keys = Object.keys(this.vm);
+        keys.forEach(key => this.vm.watch(key, (id, oldval, newval) => {
+            this.render(key);
+            return newval
+        }));
     }
     render(key) {
         let renderFunc = this.renderFunctions[key];
-        renderFunc();
+        renderFunc
+            ? renderFunc()
+            : Function();
     }
 }

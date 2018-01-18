@@ -83,41 +83,53 @@ $(function () { return myApp = new app_ts_1.App(rootSelector); });
 "use strict";
 
 exports.__esModule = true;
-var htmlTools_1 = __webpack_require__(3);
+var html_tools_1 = __webpack_require__(2);
+var app_model_1 = __webpack_require__(4);
 var App = /** @class */ (function () {
     function App(rootSelector) {
         var _this = this;
-        this.view = __webpack_require__(2);
+        this.view = __webpack_require__(3);
+        this.vm = null;
         this.node = null;
-        this.model = {
-            counter: 0,
-            buttonText: "asa"
-        };
         this.renderFunctions = {
             counter: function () {
-                debugger;
-                document.getElementById("counter").innerHTML = _this.model.counter;
+                document
+                    .getElementById("counter")
+                    .innerHTML = _this.vm.counter;
             }
         };
-        this.node = htmlTools_1.HtmlTools.createElementAndAppend(rootSelector, this.view);
-        this.watchModel();
+        this.vm = new app_model_1.AppViewModel();
+        this.node = html_tools_1.HtmlTools.createElementAndAppend(rootSelector, this.view);
+        this.startWatchModel();
         this.injectDependecy(this.node);
+        this.injectNestedDependecy(this.node);
     }
     App.prototype.onClick = function () {
-        this.model.counter++;
-        this.model.buttonText = 'buttonText';
+        this.vm.counter++;
+    };
+    App.prototype.injectNestedDependecy = function (node) {
+        for (var i = 0; i < node.children.length; i++) {
+            var child = node.children[i];
+            this.injectNestedDependecy(child);
+            this.injectDependecy(child);
+        }
     };
     App.prototype.injectDependecy = function (element) {
         element.self = this;
     };
-    App.prototype.watchModel = function () {
+    App.prototype.startWatchModel = function () {
         var _this = this;
-        var keys = Object.keys(this.model);
-        keys.forEach(function (key) { return _this.model.watch(key, function (key) { return _this.render(key); }); });
+        var keys = Object.keys(this.vm);
+        keys.forEach(function (key) { return _this.vm.watch(key, function (id, oldval, newval) {
+            _this.render(key);
+            return newval;
+        }); });
     };
     App.prototype.render = function (key) {
         var renderFunc = this.renderFunctions[key];
-        renderFunc();
+        renderFunc
+            ? renderFunc()
+            : Function();
     };
     return App;
 }());
@@ -126,12 +138,6 @@ exports.App = App;
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-module.exports = "<button onclick=\"self.onClick()\">HELLO</button>\r\n<div id=\"counter\">counter:</div>";
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -140,29 +146,44 @@ exports.__esModule = true;
 var HtmlTools = /** @class */ (function () {
     function HtmlTools() {
     }
-    HtmlTools.createElementFromHTML = function (htmlString) {
+    HtmlTools.createElement = function (htmlString) {
         var div = document.createElement('div');
         div.innerHTML = htmlString.trim();
+        // Change this to div.childNodes to support multiple top-level nodes
         return div.firstChild;
     };
-    HtmlTools.createElementAndAppend = function (selector, htmlString) {
-        var node = this.createElementFromHTML(htmlString);
-        debugger;
-        document.querySelector(selector).appendChild(node);
+    HtmlTools.createElementAndAppend = function (destinationSelector, htmlString) {
+        var node = HtmlTools.createElement(htmlString);
+        document
+            .querySelector(destinationSelector)
+            .appendChild(node);
         return node;
-    };
-    HtmlTools.registerEvent = function (element, eventName, eventHandler) {
-        var returnVal = { element: element, eventName: eventName, eventHandler: eventHandler, succeededRegister: false };
-        if (!element || !eventName || !eventHandler || !(eventName in element)) {
-            return returnVal;
-        }
-        element[eventName] = eventHandler;
-        returnVal.succeededRegister = true;
-        return returnVal;
     };
     return HtmlTools;
 }());
 exports.HtmlTools = HtmlTools;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = "<div>\n    <button onclick=\"self.onClick()\">HELLO</button>\n    <span id=\"counterLabel\">counter:</span>\n    <span id=\"counter\"></span>\n</divspan";
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var AppViewModel = /** @class */ (function () {
+    function AppViewModel() {
+        this.counter = 0;
+    }
+    return AppViewModel;
+}());
+exports.AppViewModel = AppViewModel;
 
 
 /***/ })

@@ -70,10 +70,12 @@
 "use strict";
 
 exports.__esModule = true;
-var app_ts_1 = __webpack_require__(1);
+var app_1 = __webpack_require__(1);
 var myApp;
-var rootSelector = '#mainApp';
-$(function () { return myApp = new app_ts_1.App(rootSelector); });
+$(function () { return createApp(); });
+function createApp() {
+    myApp = new app_1.App();
+}
 
 
 /***/ }),
@@ -82,42 +84,65 @@ $(function () { return myApp = new app_ts_1.App(rootSelector); });
 
 "use strict";
 
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 exports.__esModule = true;
-var html_tools_1 = __webpack_require__(2);
-var app_model_1 = __webpack_require__(3);
-var App = /** @class */ (function () {
-    function App(rootSelector) {
-        var _this = this;
-        this.view = __webpack_require__(4);
+var component_1 = __webpack_require__(5);
+var App = /** @class */ (function (_super) {
+    __extends(App, _super);
+    function App() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return App;
+}(component_1.Component));
+exports.App = App;
+
+
+/***/ }),
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var html_tools_1 = __webpack_require__(7);
+var component_model_1 = __webpack_require__(6);
+var Component = /** @class */ (function () {
+    function Component() {
         this.vm = null;
         this.node = null;
-        this.renderFunctions = {
-            counter: function () {
-                document
-                    .getElementById("counter")
-                    .innerHTML = _this.vm.counter;
-            }
-        };
-        this.vm = new app_model_1.AppViewModel();
-        this.node = html_tools_1.HtmlTools.createElementAndAppend(rootSelector, this.view);
+        this.renderFunctions = {};
+        debugger;
+        this.vm = new component_model_1.ComponentViewModel();
+        var rootSelector = Component.selector;
+        var htmlString = Component.view;
+        this.node = html_tools_1.HtmlTools.createElementAndAppend(rootSelector, htmlString);
         this.startWatchModel();
         this.injectDependecy(this.node);
         this.injectNestedDependecy(this.node);
     }
-    App.prototype.onClick = function () {
-        this.vm.counter++;
-    };
-    App.prototype.injectNestedDependecy = function (node) {
+    Component.prototype.injectNestedDependecy = function (node) {
         for (var i = 0; i < node.children.length; i++) {
             var child = node.children[i];
             this.injectNestedDependecy(child);
             this.injectDependecy(child);
         }
     };
-    App.prototype.injectDependecy = function (element) {
+    Component.prototype.injectDependecy = function (element) {
         element.self = this;
     };
-    App.prototype.startWatchModel = function () {
+    Component.prototype.startWatchModel = function () {
         var _this = this;
         var keys = Object.keys(this.vm);
         keys.forEach(function (key) { return _this.vm.watch(key, function (id, oldval, newval) {
@@ -125,19 +150,37 @@ var App = /** @class */ (function () {
             return newval;
         }); });
     };
-    App.prototype.render = function (key) {
+    Component.prototype.render = function (key) {
         var renderFunc = this.renderFunctions[key];
         renderFunc
             ? renderFunc()
             : Function();
     };
-    return App;
+    Component.view = __webpack_require__(8);
+    Component.selector = 'app';
+    return Component;
 }());
-exports.App = App;
+exports.Component = Component;
 
 
 /***/ }),
-/* 2 */
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var ComponentViewModel = /** @class */ (function () {
+    function ComponentViewModel() {
+        this.counter = '0';
+    }
+    return ComponentViewModel;
+}());
+exports.ComponentViewModel = ComponentViewModel;
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -162,23 +205,7 @@ exports.HtmlTools = HtmlTools;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var AppViewModel = /** @class */ (function () {
-    function AppViewModel() {
-        this.counter = '0';
-    }
-    return AppViewModel;
-}());
-exports.AppViewModel = AppViewModel;
-
-
-/***/ }),
-/* 4 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = "<div>\r\n    <button onclick=\"self.onClick()\">HELLO</button>\r\n    <span id=\"counterLabel\">counter:</span>\r\n    <span id=\"counter\"></span>\r\n</divspan";

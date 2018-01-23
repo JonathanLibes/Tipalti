@@ -1,7 +1,10 @@
-import { App } from "./app/app.ts";
+import { App } from "./app/app";
+
 declare var $: any;
 
 let myApp;
-let rootSelector='#mainApp';
+$(()=>createApp());
 
-$(() => myApp = new App(rootSelector));
+function createApp() {
+    myApp = new App();
+}

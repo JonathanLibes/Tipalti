@@ -5,7 +5,7 @@ declare var $ : any;
 
 export class App {
     view : string = require("./app.html");
-    vm : AppViewModel = null
+    vm : any = null
     node : any = null;
     renderFunctions : any = {
         counter: () => {

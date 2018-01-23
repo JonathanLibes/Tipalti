@@ -84,11 +84,11 @@ $(function () { return myApp = new app_ts_1.App(rootSelector); });
 
 exports.__esModule = true;
 var html_tools_1 = __webpack_require__(2);
-var app_model_1 = __webpack_require__(4);
+var app_model_1 = __webpack_require__(3);
 var App = /** @class */ (function () {
     function App(rootSelector) {
         var _this = this;
-        this.view = __webpack_require__(3);
+        this.view = __webpack_require__(4);
         this.vm = null;
         this.node = null;
         this.renderFunctions = {
@@ -149,14 +149,11 @@ var HtmlTools = /** @class */ (function () {
     HtmlTools.createElement = function (htmlString) {
         var div = document.createElement('div');
         div.innerHTML = htmlString.trim();
-        // Change this to div.childNodes to support multiple top-level nodes
         return div.firstChild;
     };
-    HtmlTools.createElementAndAppend = function (destinationSelector, htmlString) {
+    HtmlTools.createElementAndAppend = function (selector, htmlString) {
         var node = HtmlTools.createElement(htmlString);
-        document
-            .querySelector(destinationSelector)
-            .appendChild(node);
+        document.querySelector(selector).appendChild(node);
         return node;
     };
     return HtmlTools;
@@ -166,12 +163,6 @@ exports.HtmlTools = HtmlTools;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-module.exports = "<div>\n    <button onclick=\"self.onClick()\">HELLO</button>\n    <span id=\"counterLabel\">counter:</span>\n    <span id=\"counter\"></span>\n</divspan";
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -179,12 +170,18 @@ module.exports = "<div>\n    <button onclick=\"self.onClick()\">HELLO</button>\n
 exports.__esModule = true;
 var AppViewModel = /** @class */ (function () {
     function AppViewModel() {
-        this.counter = 0;
+        this.counter = '0';
     }
     return AppViewModel;
 }());
 exports.AppViewModel = AppViewModel;
 
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = "<div>\r\n    <button onclick=\"self.onClick()\">HELLO</button>\r\n    <span id=\"counterLabel\">counter:</span>\r\n    <span id=\"counter\"></span>\r\n</divspan";
 
 /***/ })
 /******/ ]);
